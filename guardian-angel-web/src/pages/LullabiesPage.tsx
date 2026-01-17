@@ -1,7 +1,7 @@
 import { Heart, Thermometer, Wind, Volume2, Video, Camera } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
-const MonitorPage = () => {
+const LullabiesPage = () => {
   const [heartRate, setHeartRate] = useState(120);
   const [temperature, setTemperature] = useState(36.8);
   const [breathing, setBreathing] = useState(32);

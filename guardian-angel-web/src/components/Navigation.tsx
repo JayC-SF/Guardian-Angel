@@ -7,8 +7,8 @@ interface NavigationProps {
 const Navigation = ({ activeTab }: NavigationProps) => {
   const tabs = [
     { id: 'monitor', label: 'Live Monitor', icon: Baby },
-    { id: 'activity', label: 'Activity Log', icon: Activity },
-    { id: 'sleep', label: 'Sleep Tracking', icon: Moon },
+    { id: 'activity', label: 'View', icon: Activity },
+    { id: 'lullabies', label: 'Lullabies', icon: Moon },
     { id: 'alerts', label: 'Alerts', icon: Bell },
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
