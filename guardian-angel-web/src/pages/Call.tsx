@@ -12,7 +12,12 @@ const VideoChat: React.FC = () => {
 
     useEffect(() => {
         // Initialize Peer
-        const peer = new Peer();
+        const peer = new Peer('', {
+            host: window.location.hostname,
+            port: parseInt(window.location.port) || (window.location.protocol === 'https:' ? 443 : 80),
+            path: '/peerjs/myapp',
+            secure: window.location.protocol === 'https:'
+        });
 
         peer.on('open', (id: string) => {
             setPeerId(id);
