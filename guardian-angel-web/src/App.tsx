@@ -2,6 +2,7 @@ import Navigation from './components/Navigation';
 import MonitorPage from './pages/MonitorPage';
 import ActivityPage from './pages/ActivityPage';
 import { BrowserRouter, Route, Routes } from 'react-router';
+import Call from './pages/Call';
 
 function App() {
 
@@ -48,6 +49,11 @@ function App() {
             <>
               <Navigation activeTab={"activity"} />
               <ActivityPage />
+            </>} />
+          <Route path="/call" element={
+            <>
+              <Navigation activeTab={"activity"} />
+              <Call />
             </>} />
         </Routes>
       </div>
