@@ -2,10 +2,9 @@ import { Baby, Activity, Moon, Bell, Settings } from 'lucide-react';
 
 interface NavigationProps {
   activeTab: string;
-  setActiveTab: (tab: string) => void;
 }
 
-const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
+const Navigation = ({ activeTab }: NavigationProps) => {
   const tabs = [
     { id: 'monitor', label: 'Live Monitor', icon: Baby },
     { id: 'activity', label: 'Activity Log', icon: Activity },
@@ -31,22 +30,21 @@ const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
             {tabs.map((tab) => {
               const Icon = tab.icon;
               return (
-                <button
+                <a
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
+                  href={`/${tab.id}`}
                   className={`
                     flex items-center space-x-2 px-4 py-2 rounded-lg font-medium text-sm
                     transition-all duration-200
-                    ${
-                      activeTab === tab.id
-                        ? 'bg-gradient-to-r from-rose-50 to-blue-50 text-rose-600 shadow-sm'
-                        : 'text-gray-500 hover:text-rose-500 hover:bg-rose-50/50'
+                    ${activeTab === tab.id
+                      ? 'bg-gradient-to-r from-rose-50 to-blue-50 text-rose-600 shadow-sm'
+                      : 'text-gray-500 hover:text-rose-500 hover:bg-rose-50/50'
                     }
                   `}
                 >
                   <Icon className="w-4 h-4" />
                   <span className="hidden sm:inline">{tab.label}</span>
-                </button>
+                </a>
               );
             })}
           </div>
