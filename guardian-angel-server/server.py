@@ -9,6 +9,11 @@ import io   # <--- Required for audio streaming
 import time
 from datetime import datetime
 from dotenv import load_dotenv
+import tensorflow as tf
+from tensorflow.keras.models import load_model
+import tensorflow_hub as hub
+import librosa
+import numpy as np
 
 load_dotenv()
 
@@ -20,7 +25,7 @@ CORS(app)
 GEMINI_KEY = os.getenv('GEMINI_KEY')
 ELEVEN_KEY = os.getenv('ELEVEN_KEY')
 VOICE_ID = os.getenv('VOICE_ID')
-MONGO_URI = os.getenv('Mongo_URL') 
+MONGO_URI = os.getenv('Mongo_URL')
 PORT = os.getenv('PORT')
 
 
@@ -37,6 +42,7 @@ except Exception as e:
     print(f"❌ Database Error: {e}")
 
 # --- ROUTES ---
+
 
 @app.route('/generate-lullaby', methods=['POST'])
 def generate_lullaby():
@@ -76,13 +82,14 @@ def generate_lullaby():
         print(f"ERROR: {e}")
         return {"error": str(e)}, 500
 
+
 @app.route('/upload-lullaby', methods=['POST'])
 def upload_lullaby():
     # This endpoint SAVES parent recordings to Disk + MongoDB
     try:
         if 'file' not in request.files:
             return jsonify({"error": "No file part"}), 400
-            
+
         file = request.files['file']
         user_id = request.form.get('user_id', 'guest')
         name = request.form.get('name', 'My Recording')
@@ -91,11 +98,11 @@ def upload_lullaby():
         # 1. Save locally
         if not os.path.exists('static'):
             os.makedirs('static')
-            
+
         filename = f"parent_{int(time.time())}.webm"
         filepath = os.path.join("static", filename)
         file.save(filepath)
-        
+
         # 2. Generate URL
         file_url = f"http://127.0.0.1:5000/static/{filename}"
 
@@ -108,7 +115,7 @@ def upload_lullaby():
             "audio_url": file_url,
             "created_at": datetime.utcnow()
         })
-        
+
         print(f"✅ Saved recording: {name}")
         return jsonify({"status": "success", "url": file_url})
 
@@ -116,20 +123,22 @@ def upload_lullaby():
         print(f"❌ Upload Error: {e}")
         return jsonify({"error": str(e)}), 500
 
+
 @app.route('/get-library/<user_id>', methods=['GET'])
 def get_library(user_id):
     # This is required for the RecordPage to show the list!
     try:
         # Fetch stories for this user, newest first
         stories = list(lullabies_collection.find({"user_id": user_id}).sort("created_at", -1))
-        
+
         # Convert ObjectId to string
         for s in stories:
             s['_id'] = str(s['_id'])
-            
+
         return jsonify(stories)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 @app.route('/delete-lullaby/<id>', methods=['DELETE'])
 def delete_lullaby(id):
@@ -140,5 +149,36 @@ def delete_lullaby(id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
+# Load YAMNet
+yamnet_model = hub.load("https://tfhub.dev/google/yamnet/1")
+
+# Load classifier
+model = load_model("./baby_cry_classifier.keras")
+
+
+def extract_embedding(file_path):
+    audio, _ = librosa.load(file_path, sr=16000)
+    scores, embeddings, spectrogram = yamnet_model(audio)
+    avg_embedding = tf.reduce_mean(embeddings, axis=0)
+    return avg_embedding.numpy()
+
+
+@app.route("/predict", methods=["POST"])
+def predict():
+    if "file" not in request.files:
+        return jsonify({"error": "No file uploaded"}), 400
+
+    file = request.files["file"]
+    file_path = "temp.wav"
+    file.save(file_path)
+
+    embedding = extract_embedding(file_path)
+    prob = model.predict(np.expand_dims(embedding, axis=0))[0][0]
+    label = "cry" if prob > 0.5 else "not_cry"
+
+    return jsonify({"prediction": label, "probability": float(prob)})
+
+
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(host='0.0.0.0', debug=True, port=PORT)
