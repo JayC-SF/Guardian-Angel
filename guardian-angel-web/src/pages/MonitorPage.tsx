@@ -1,6 +1,6 @@
 import { Heart, Thermometer, Wind, Video, Camera, Mic, MicOff } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
-import Peer, { MediaConnection } from 'peerjs';
+import Peer from 'peerjs';
 
 const MonitorPage = () => {
   const [peerId, setPeerId] = useState<string>('');
