@@ -136,7 +136,7 @@ const MonitorPage = () => {
       const newState = !isMuted;
 
       myStream.getAudioTracks().forEach(track => {
-        track.enabled = !newState; // enabled: true means unmuted
+        track.enabled = newState; // enabled: true means unmuted
       });
 
       setIsMuted(newState);
