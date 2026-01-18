@@ -1,4 +1,4 @@
-import { Baby, Activity, Moon, Bell, Settings, LogOut } from 'lucide-react';
+import { Baby, Moon, Settings, LogOut } from 'lucide-react';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router';

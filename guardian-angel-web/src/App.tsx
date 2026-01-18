@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { Route, Routes, Navigate } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
 
@@ -39,22 +38,22 @@ function App() {
     <ThemeProvider>
       <div className="min-h-screen bg-gradient-to-br from-rose-50 via-blue-50 to-amber-50">
         <Routes>
-          
+
           {/* --- PUBLIC ROUTE --- */}
           <Route path="/" element={
             isAuthenticated ? <Navigate to="/monitor" replace /> : <LoginPage />
           } />
 
           {/* --- PROTECTED ROUTES (Require Login) --- */}
-          
+
           {/* Monitor: Includes your StoryTeller! */}
           <Route path="/monitor" element={
             isAuthenticated ? (
               <>
                 <Navigation activeTab="monitor" />
                 <div className="space-y-6">
-                    <MonitorPage />
-                    <StoryTeller />
+                  <MonitorPage />
+                  <StoryTeller />
                 </div>
               </>
             ) : <Navigate to="/" replace />
@@ -90,14 +89,14 @@ function App() {
           <Route path="/call" element={
             isAuthenticated ? (
               <>
-                
+
                 <BabyCameraNavigation />
                 <BabyCamera />
               </>
             ) : <Navigate to="/" replace />
           } />
 
-          
+
 
           {/* Catch-all Redirect */}
           <Route path="/" element={<Navigate to={isAuthenticated ? "/monitor" : "/"} replace />} />
