@@ -1,62 +1,50 @@
 import { useState, useRef, useEffect } from 'react';
+import { useAuth0 } from '@auth0/auth0-react';
 import './Record.css';
 
 interface Recording {
-  id: string;
+  _id: string; // MongoDB uses _id, not id
   name: string;
   duration: number;
-  date: Date;
-  blob: Blob;
+  audio_url: string; // URL from server
+  created_at: string;
 }
 
 export const RecordPage = () => {
+  const { user, isAuthenticated } = useAuth0();
+  
   const [isRecording, setIsRecording] = useState(false);
   const [recordings, setRecordings] = useState<Recording[]>([]);
   const [recordingTime, setRecordingTime] = useState(0);
   const [recordingName, setRecordingName] = useState('');
+  const [isUploading, setIsUploading] = useState(false); // New loading state
+
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<number | null>(null);
 
+  // 1. FETCH RECORDINGS FROM SERVER
   useEffect(() => {
-    // Load saved recordings from localStorage
+    if (isAuthenticated && user?.sub) {
+      fetchRecordings();
+    }
+  }, [isAuthenticated, user]);
+
+  const fetchRecordings = async () => {
     try {
-      if (typeof window !== 'undefined') {
-        const saved = localStorage.getItem('guardian-angel-recordings');
-        if (saved) {
-          const parsed = JSON.parse(saved);
-          // Convert date strings back to Date objects
-          const recordingsWithDates = parsed.map((r: any) => ({
-            ...r,
-            date: new Date(r.date)
-          }));
-          setRecordings(recordingsWithDates);
-        }
-      }
+      // Re-using the get-library endpoint we made earlier
+      const res = await fetch(`http://127.0.0.1:5000/get-library/${user?.sub}`);
+      const data = await res.json();
+      // Filter to only show recordings (if you want to mix them, remove the filter)
+      setRecordings(data);
     } catch (e) {
       console.error('Error loading recordings:', e);
-    }
-  }, []);
-
-  const saveRecordings = (newRecordings: Recording[]) => {
-    setRecordings(newRecordings);
-    try {
-      if (typeof window !== 'undefined') {
-        // Save to localStorage (excluding blob data for storage efficiency)
-        const toSave = newRecordings.map(r => ({
-          id: r.id,
-          name: r.name,
-          duration: r.duration,
-          date: r.date.toISOString()
-        }));
-        localStorage.setItem('guardian-angel-recordings', JSON.stringify(toSave));
-      }
-    } catch (e) {
-      console.error('Error saving recordings:', e);
     }
   };
 
   const startRecording = async () => { 
+    if (!isAuthenticated) return alert("Please log in to save recordings.");
+
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const mediaRecorder = new MediaRecorder(stream);
@@ -69,24 +57,14 @@ export const RecordPage = () => {
         }
       };
 
-      mediaRecorder.onstop = () => {
+      mediaRecorder.onstop = async () => {
         const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
-        const duration = recordingTime;
-  
-
-    
-        const newRecording: Recording = {
-          id: Date.now().toString(),
-          name: recordingName || `Lullaby ${recordings.length + 1}`,
-          duration,
-          date: new Date(),
-          blob: audioBlob
-        };
-
-        const updated = [...recordings, newRecording];
-        saveRecordings(updated);
+        const duration = recordingTime; // Capture time before reset
         
-        // Stop all tracks
+        // 2. UPLOAD TO SERVER
+        await handleUpload(audioBlob, duration);
+
+        // Cleanup
         stream.getTracks().forEach(track => track.stop());
         setRecordingTime(0);
         setRecordingName('');
@@ -95,13 +73,40 @@ export const RecordPage = () => {
       mediaRecorder.start();
       setIsRecording(true);
 
-      // Start timer
       timerRef.current = window.setInterval(() => {
         setRecordingTime((prev) => prev + 1);
       }, 1000);
+
     } catch (error) {
       console.error('Error accessing microphone:', error);
       alert('Unable to access microphone. Please check permissions.');
+    }
+  };
+
+  const handleUpload = async (blob: Blob, duration: number) => {
+    setIsUploading(true);
+    const formData = new FormData();
+    formData.append('file', blob);
+    formData.append('user_id', user?.sub || 'guest');
+    formData.append('name', recordingName || `Lullaby ${new Date().toLocaleDateString()}`);
+    formData.append('duration', duration.toString());
+
+    try {
+      const res = await fetch('http://127.0.0.1:5000/upload-lullaby', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (res.ok) {
+        // Refresh list from DB
+        fetchRecordings(); 
+      } else {
+        alert("Failed to save recording to server.");
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -117,19 +122,19 @@ export const RecordPage = () => {
     }
   };
 
-  const playRecording = (recording: Recording) => {
-    const audioUrl = URL.createObjectURL(recording.blob);
-    const audio = new Audio(audioUrl);
+  const playRecording = (url: string) => {
+    const audio = new Audio(url);
     audio.play();
-    
-    audio.onended = () => {
-      URL.revokeObjectURL(audioUrl);
-    };
   };
 
-  const deleteRecording = (id: string) => {
-    const updated = recordings.filter(r => r.id !== id);
-    saveRecordings(updated);
+  const deleteRecording = async (id: string) => {
+    if(!confirm("Are you sure?")) return;
+    
+    // Optimistic update
+    setRecordings(recordings.filter(r => r._id !== id));
+    
+    // Call server API
+    await fetch(`http://127.0.0.1:5000/delete-lullaby/${id}`, { method: 'DELETE' });
   };
 
   const formatTime = (seconds: number) => {
@@ -139,80 +144,89 @@ export const RecordPage = () => {
   };
 
   return (
-    <div className="record-container">
-      <div className="record-header">
-        <h1>Record Lullaby</h1>
-        <p>Create a soothing lullaby recording for your little one</p>
+    <div className="record-container p-6">
+      <div className="record-header mb-8 text-center">
+        <h1 className="text-3xl font-bold text-purple-700">🎤 Parent's Voice</h1>
+        <p className="text-gray-600">Record a soothing message or song for your baby.</p>
       </div>
 
-      <div className="record-section">
-        <div className="recorder-card">
-          <h2>New Recording</h2>
+      <div className="record-section max-w-4xl mx-auto grid md:grid-cols-2 gap-8">
+        
+        {/* RECORDER CARD */}
+        <div className="recorder-card bg-white p-6 rounded-xl shadow-lg h-fit">
+          <h2 className="text-xl font-bold mb-4">New Recording</h2>
           
           {!isRecording ? (
-            <>
+            <div className="space-y-4">
               <div className="input-group">
-                <label htmlFor="recording-name">Recording Name (optional)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Recording Name</label>
                 <input
                   type="text"
-                  id="recording-name"
                   value={recordingName}
                   onChange={(e) => setRecordingName(e.target.value)}
-                  placeholder="My Lullaby"
+                  placeholder="e.g. Goodnight Song"
+                  className="w-full border p-2 rounded focus:ring-2 focus:ring-purple-300 outline-none"
                 />
               </div>
               
-              <button onClick={startRecording} className="record-btn start">
-                🎤 Start Recording
+              <button 
+                onClick={startRecording} 
+                disabled={isUploading}
+                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-full transition-all flex items-center justify-center gap-2"
+              >
+                {isUploading ? "Saving..." : "🔴 Start Recording"}
               </button>
-            </>
+            </div>
           ) : (
-            <>
-              <div className="recording-status">
-                <div className="recording-indicator">
-                  <span className="pulse-dot"></span>
-                  <span>Recording...</span>
-                </div>
-                <div className="recording-time">{formatTime(recordingTime)}</div>
+            <div className="text-center space-y-6 py-4">
+              <div className="text-4xl font-mono text-red-500 font-bold animate-pulse">
+                 {formatTime(recordingTime)}
               </div>
+              <div className="text-sm text-gray-500">Recording in progress...</div>
               
-              <button onClick={stopRecording} className="record-btn stop">
-                ⏹️ Stop Recording
+              <button 
+                onClick={stopRecording} 
+                className="w-full bg-red-100 hover:bg-red-200 text-red-600 font-bold py-3 px-4 rounded-full border-2 border-red-200 transition-all"
+              >
+                ⏹️ Stop & Save
               </button>
-            </>
+            </div>
           )}
         </div>
 
-        <div className="recordings-list">
-          <h2>Your Recordings</h2>
+        {/* LIST CARD */}
+        <div className="recordings-list bg-white p-6 rounded-xl shadow-lg">
+          <h2 className="text-xl font-bold mb-4">Your Library</h2>
           
           {recordings.length === 0 ? (
-            <div className="empty-state">
-              <span className="empty-icon">🎵</span>
-              <p>No recordings yet. Start recording your first lullaby!</p>
+            <div className="text-center text-gray-400 py-8">
+              <p>No recordings yet.</p>
             </div>
           ) : (
-            <div className="recordings-grid">
-              {recordings.map((recording) => (
-                <div key={recording.id} className="recording-card">
-                  <div className="recording-info">
-                    <h3>{recording.name}</h3>
-                    <p className="recording-meta">
-                      {formatTime(recording.duration)} • {recording.date.toLocaleDateString()}
+            <div className="space-y-3 max-h-[400px] overflow-y-auto">
+              {recordings.map((rec) => (
+                <div key={rec._id} className="p-3 border rounded-lg hover:bg-gray-50 transition-colors flex justify-between items-center">
+                  <div>
+                    <h3 className="font-bold text-gray-800">{rec.name || "Untitled"}</h3>
+                    <p className="text-xs text-gray-500">
+                      {rec.created_at ? new Date(rec.created_at).toLocaleDateString() : 'Just now'}
                     </p>
                   </div>
-                  <div className="recording-actions">
+                  
+                  <div className="flex gap-2">
                     <button
-                      onClick={() => playRecording(recording)}
-                      className="action-btn play"
+                      onClick={() => playRecording(rec.audio_url)}
+                      className="p-2 text-purple-600 hover:bg-purple-100 rounded-full"
+                      title="Play"
                     >
-                      ▶️ Play
+                      ▶️
                     </button>
                     <button
-                      onClick={() => deleteRecording(recording.id)}
-                      className="action-btn delete"
+                      onClick={() => deleteRecording(rec._id)}
+                      className="p-2 text-red-400 hover:bg-red-100 rounded-full"
+                      title="Delete"
                     >
-                      🗑️ Delete
+                      🗑️
                     </button>
                   </div>
                 </div>
@@ -220,8 +234,8 @@ export const RecordPage = () => {
             </div>
           )}
         </div>
+
       </div>
     </div>
   );
 };
-
