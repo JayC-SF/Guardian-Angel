@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import './Storyteller.css';
 
 export default function StoryTeller() {
   const [topic, setTopic] = useState('');
@@ -46,23 +47,21 @@ export default function StoryTeller() {
   };
 
   return (
-    <div className="p-6 bg-white rounded-xl shadow-lg mt-6 max-w-md mx-auto">
-      <h2 className="text-2xl font-bold mb-4 text-purple-600">🌙 Bedtime Storyteller</h2>
+    <div className="storyteller-container">
+      <h2 className="storyteller-title">🌙 Bedtime Storyteller</h2>
       
       <input 
         type="text" 
         value={topic}
         onChange={(e) => setTopic(e.target.value)}
         placeholder="What does Leo love? (e.g. Dinosaurs)"
-        className="border p-3 rounded w-full mb-4 focus:ring-2 focus:ring-purple-300 outline-none"
+        className="storyteller-input"
       />
       
       <button 
         onClick={handleGenerate} 
         disabled={isLoading}
-        className={`w-full p-3 rounded text-white font-bold transition-all ${
-          isLoading ? 'bg-gray-400' : 'bg-purple-600 hover:bg-purple-700'
-        }`}
+        className={`storyteller-button ${isLoading ? 'disabled' : ''}`}
       >
         {isLoading ? status : "✨ Write & Read Story"}
       </button>
@@ -70,7 +69,7 @@ export default function StoryTeller() {
       {/* Stop Button */}
       <button 
         onClick={() => { if(audioRef.current) audioRef.current.pause(); setStatus("Stopped"); }}
-        className="mt-2 text-sm text-red-500 underline w-full text-center"
+        className="storyteller-stop-button"
       >
         Stop Audio
       </button>

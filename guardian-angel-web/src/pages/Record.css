@@ -261,6 +261,111 @@
   box-shadow: 0 4px 8px rgba(239, 68, 68, 0.3);
 }
 
+/* Dark Mode Styles */
+.dark-mode .record-container {
+  background: linear-gradient(to bottom right, #1a1a2e, #16213e, #0f172a);
+}
+
+.dark-mode .record-header h1 {
+  background: linear-gradient(to right, #a78bfa, #60a5fa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.dark-mode .record-header p {
+  color: #94a3b8;
+}
+
+.dark-mode .recorder-card {
+  background: #1e293b;
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .recorder-card h2 {
+  color: #f1f5f9;
+}
+
+.dark-mode .input-group label {
+  color: #cbd5e1;
+}
+
+.dark-mode .input-group input {
+  background: #0f172a;
+  border-color: #334155;
+  color: #f1f5f9;
+}
+
+.dark-mode .input-group input:focus {
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+}
+
+.dark-mode .record-btn.start {
+  background: linear-gradient(to right, #7c3aed, #3b82f6);
+  box-shadow: 0 4px 6px -1px rgba(124, 58, 237, 0.3);
+}
+
+.dark-mode .record-btn.start:hover {
+  box-shadow: 0 6px 12px -1px rgba(124, 58, 237, 0.4);
+}
+
+.dark-mode .recording-time {
+  background: linear-gradient(to right, #a78bfa, #60a5fa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.dark-mode .recordings-list {
+  background: #1e293b;
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .recordings-list h2 {
+  color: #f1f5f9;
+}
+
+.dark-mode .empty-state {
+  color: #94a3b8;
+}
+
+.dark-mode .recording-card {
+  background: linear-gradient(to bottom right, #1e293b, #0f172a);
+  border: 2px solid rgba(139, 92, 246, 0.3);
+}
+
+.dark-mode .recording-card:hover {
+  border-color: #8b5cf6;
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+}
+
+.dark-mode .recording-info h3 {
+  color: #f1f5f9;
+}
+
+.dark-mode .recording-meta {
+  color: #94a3b8;
+}
+
+.dark-mode .action-btn.play {
+  background: linear-gradient(to right, #059669, #047857);
+}
+
+.dark-mode .action-btn.play:hover {
+  box-shadow: 0 4px 8px rgba(5, 150, 105, 0.3);
+}
+
+.dark-mode .action-btn.delete {
+  background: linear-gradient(to right, #dc2626, #b91c1c);
+}
+
+.dark-mode .action-btn.delete:hover {
+  box-shadow: 0 4px 8px rgba(220, 38, 38, 0.3);
+}
+
 @media (max-width: 768px) {
   .recordings-grid {
     grid-template-columns: 1fr;

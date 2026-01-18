@@ -66,3 +66,37 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+/* Dark Mode Styles */
+.dark-mode {
+  color-scheme: dark;
+}
+
+.dark-mode body {
+  background-color: #0f172a;
+  color: rgba(255, 255, 255, 0.87);
+}
+
+.dark-mode :root {
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #0f172a;
+}
+
+.dark-mode a {
+  color: #8b5cf6;
+}
+
+.dark-mode a:hover {
+  color: #a78bfa;
+}
+
+.dark-mode button {
+  background-color: #1e293b;
+  color: #f1f5f9;
+  border-color: #334155;
+}
+
+.dark-mode button:hover {
+  border-color: #8b5cf6;
+  background-color: #334155;
+}
