@@ -19,6 +19,11 @@ export default defineConfig({
         changeOrigin: true, // Needed for virtual hosted sites
         ws: true, // Enable WebSocket proxying
       },
+      "/flask": {
+        target: "http://localhost:6000", // Flask server URL
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/flask/, ''),
+      },
     },
   },
 });
