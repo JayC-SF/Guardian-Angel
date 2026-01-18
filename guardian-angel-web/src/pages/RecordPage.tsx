@@ -33,8 +33,7 @@ export const RecordPage = () => {
   const fetchRecordings = async () => {
     try {
       // Re-using the get-library endpoint we made earlier
-      const url = window.location.hostname == 'localhost' ? `http://127.0.0.1:5000/get-library/${user?.sub}` : `${import.meta.env.VITE_PYTHON_SERVER}/get-library/${user?.sub}`;
-      const res = await fetch(url);
+      const res = await fetch(`http://127.0.0.1:6000/get-library/${user?.sub}`);
       const data = await res.json();
       // Filter to only show recordings (if you want to mix them, remove the filter)
       setRecordings(data);
@@ -93,8 +92,7 @@ export const RecordPage = () => {
     formData.append('duration', duration.toString());
 
     try {
-      const url = window.location.hostname == 'localhost' ? 'http://127.0.0.1:5000/upload-lullaby' : `${import.meta.env.VITE_PYTHON_SERVER}/upload-lullaby`;
-      const res = await fetch(url, {
+      const res = await fetch('http://127.0.0.1:6000/upload-lullaby', {
         method: 'POST',
         body: formData,
       });
@@ -136,8 +134,7 @@ export const RecordPage = () => {
     setRecordings(recordings.filter(r => r._id !== id));
 
     // Call server API
-    const url = window.location.hostname == 'localhost' ? `http://127.0.0.1:5000/delete-lullaby/${id}` : `${import.meta.env.VITE_PYTHON_SERVER}/delete-lullaby/${id}`;
-    await fetch(url, { method: 'DELETE' });
+    await fetch('http://127.0.0.1:6000/delete-lullaby/${id}', { method: 'DELETE' });
   };
 
   const formatTime = (seconds: number) => {

@@ -19,14 +19,15 @@ load_dotenv()
 
 # --- CRITICAL: Enable Static Folder so recordings can be played ---
 app = Flask(__name__, static_folder='static', static_url_path='/static')
-CORS(app)
+
+CORS(app, resources={r"/*": {"origins": "*"}}, allow_headers="*", methods="*")
 
 # --- KEYS ---
 GEMINI_KEY = os.getenv('GEMINI_KEY')
 ELEVEN_KEY = os.getenv('ELEVEN_KEY')
 VOICE_ID = os.getenv('VOICE_ID')
 MONGO_URI = os.getenv('Mongo_URL')
-PORT = os.getenv('PORT')
+PORT = 6000
 
 
 google_client = genai.Client(api_key=GEMINI_KEY)
