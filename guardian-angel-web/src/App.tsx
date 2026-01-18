@@ -69,19 +69,19 @@ function App() {
             ) : <Navigate to="/" replace />
           } />
 
-          <Route path="/lullabies" element={
+          <Route path="/lullaby" element={
             isAuthenticated ? (
               <>
-                <Navigation activeTab="lullabies" />
+                <Navigation activeTab="lullaby" />
                 <RecordPage />
               </>
             ) : <Navigate to="/" replace />
           } />
 
-          <Route path="/settings" element={
+          <Route path="/setting" element={
             isAuthenticated ? (
               <>
-                <Navigation activeTab="settings" />
+                <Navigation activeTab="setting" />
                 <SettingsPage />
               </>
             ) : <Navigate to="/" replace />
@@ -97,8 +97,10 @@ function App() {
             ) : <Navigate to="/" replace />
           } />
 
+          
+
           {/* Catch-all Redirect */}
-          <Route path="*" element={<Navigate to={isAuthenticated ? "/monitor" : "/"} replace />} />
+          <Route path="/" element={<Navigate to={isAuthenticated ? "/monitor" : "/"} replace />} />
 
         </Routes>
       </div>

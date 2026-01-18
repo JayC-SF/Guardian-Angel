@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Peer, { MediaConnection } from 'peerjs';
+import StoryTeller from '../components/Storyteller';
 
 const BabyCamera: React.FC = () => {
     const [peerId, setPeerId] = useState<string>('');
@@ -51,12 +52,15 @@ const BabyCamera: React.FC = () => {
 
     return (
         <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
+            <StoryTeller />
             <h3>Your Peer ID: <span style={{ color: '#007bff' }}>{peerId}</span></h3>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
                 <video ref={remoteVideoRef} style={{ width: '100%', background: '#000' }} />
+
             </div>
         </div>
+        
     );
 };
 
