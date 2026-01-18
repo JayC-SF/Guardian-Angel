@@ -15,7 +15,7 @@ export default function StoryTeller() {
 
     try {
       // 1. Call YOUR Python Server (Running on port 5000)
-      const response = await fetch('http://127.0.0.1:5000/generate-lullaby', {
+      const response = await fetch('/flask/generate-lullaby', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ topic: topic })

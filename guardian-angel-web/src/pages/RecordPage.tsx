@@ -33,7 +33,7 @@ export const RecordPage = () => {
   const fetchRecordings = async () => {
     try {
       // Re-using the get-library endpoint we made earlier
-      const res = await fetch(`http://127.0.0.1:6000/get-library/${user?.sub}`);
+      const res = await fetch(`/flask/get-library/${user?.sub}`);
       const data = await res.json();
       // Filter to only show recordings (if you want to mix them, remove the filter)
       setRecordings(data);
@@ -92,7 +92,7 @@ export const RecordPage = () => {
     formData.append('duration', duration.toString());
 
     try {
-      const res = await fetch('http://127.0.0.1:6000/upload-lullaby', {
+      const res = await fetch('/flask/upload-lullaby', {
         method: 'POST',
         body: formData,
       });
@@ -134,7 +134,7 @@ export const RecordPage = () => {
     setRecordings(recordings.filter(r => r._id !== id));
 
     // Call server API
-    await fetch('http://127.0.0.1:6000/delete-lullaby/${id}', { method: 'DELETE' });
+    await fetch(`/flask/delete-lullaby/${id}`, { method: 'DELETE' });
   };
 
   const formatTime = (seconds: number) => {

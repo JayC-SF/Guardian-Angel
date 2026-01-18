@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import Peer, { MediaConnection } from 'peerjs';
 import StoryTeller from '../components/Storyteller';
 import { Video, Camera, Copy, Check } from 'lucide-react';
+import AudioRecorder from '../components/AudioRecorder';
 
 const BabyCamera: React.FC = () => {
     const [peerId, setPeerId] = useState<string>('');
@@ -93,14 +94,15 @@ const BabyCamera: React.FC = () => {
                 {/* Main Content Grid */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Camera Feed - Takes 2 columns */}
+                    <AudioRecorder />
                     <div className="lg:col-span-2 space-y-6">
                         <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg overflow-hidden border border-rose-100 dark:border-slate-700">
                             <div className="relative aspect-video bg-gradient-to-br from-gray-100 to-gray-200 dark:from-slate-700 dark:to-slate-800 flex items-center justify-center">
                                 {remoteVideoRef.current?.srcObject ? (
-                                    <video 
-                                        ref={remoteVideoRef} 
-                                        className="w-full h-full object-cover" 
-                                        autoPlay 
+                                    <video
+                                        ref={remoteVideoRef}
+                                        className="w-full h-full object-cover"
+                                        autoPlay
                                         playsInline
                                     />
                                 ) : (
