@@ -6,6 +6,7 @@ from pymongo import MongoClient
 import certifi
 import os
 import io   # <--- Required for audio streaming
+from twilio.rest import Client
 import time
 from datetime import datetime
 from dotenv import load_dotenv
