@@ -1,25 +1,29 @@
+import { useEffect } from 'react';
+import { Route, Routes, Navigate } from 'react-router-dom';
+import { useAuth0 } from '@auth0/auth0-react';
+
+// Contexts
+import { ThemeProvider } from './contexts/ThemeContext';
+
+// Components
 import Navigation from './components/Navigation';
+import StoryTeller from './components/Storyteller';
+
+// Pages
 import MonitorPage from './pages/MonitorPage';
 import ActivityPage from './pages/ActivityPage';
+import { RecordPage } from './pages/RecordPage';
+import SettingsPage from './pages/SettingsPage';
 import LoginPage from './pages/LoginPage';
-import SettingPage from './pages/SettingPage';
-import LullabiesPage from './pages/LullabiesPage';
-import { Route, Routes, Navigate } from 'react-router';
-import { useAuth0 } from '@auth0/auth0-react';
-import { useEffect } from 'react';
 import BabyCameraNavigation from './components/BabyCameraNavigation';
 import BabyCamera from './pages/BabyCamera';
+
+
 
 function App() {
   const { isLoading, isAuthenticated } = useAuth0();
 
-  // Auto-redirect to monitor if authenticated
-  useEffect(() => {
-    if (isAuthenticated && !isLoading) {
-      window.history.replaceState(null, '', '/monitor');
-    }
-  }, [isAuthenticated, isLoading]);
-
+  // 1. Loading Spinner (While Auth0 checks if user is logged in)
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-rose-50 via-blue-50 to-amber-50 flex items-center justify-center">
@@ -32,93 +36,75 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-blue-50 to-amber-50">
-      <Routes>
-        {/* Login/Landing Page - Accessible to all, redirects if authenticated */}
-        <Route
-          path="/"
-          element={
-            isAuthenticated ? (
-              <Navigate to="/monitor" replace />
-            ) : (
-              <LoginPage />
-            )
-          }
-        />
+    <ThemeProvider>
+      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-blue-50 to-amber-50">
+        <Routes>
+          
+          {/* --- PUBLIC ROUTE --- */}
+          <Route path="/" element={
+            isAuthenticated ? <Navigate to="/monitor" replace /> : <LoginPage />
+          } />
 
-        {/* Protected Routes - Only accessible when authenticated */}
-        <Route
-          path="/monitor"
-          element={
+          {/* --- PROTECTED ROUTES (Require Login) --- */}
+          
+          {/* Monitor: Includes your StoryTeller! */}
+          <Route path="/monitor" element={
             isAuthenticated ? (
               <>
                 <Navigation activeTab="monitor" />
-                <MonitorPage />
+                <div className="space-y-6">
+                    <MonitorPage />
+                    <StoryTeller />
+                </div>
               </>
-            ) : (
-              <Navigate to="/" replace />
-            )
-          }
-        />
-        <Route
-          path="/activity"
-          element={
+            ) : <Navigate to="/" replace />
+          } />
+
+          <Route path="/activity" element={
             isAuthenticated ? (
               <>
                 <Navigation activeTab="activity" />
                 <ActivityPage />
               </>
-            ) : (
-              <Navigate to="/" replace />
-            )
-          }
-        />
-        <Route
-          path="/call"
-          element={
-            isAuthenticated ? (
-              <>
-                <BabyCameraNavigation />
-                <BabyCamera />
-              </>
-            ) : (
-              <Navigate to="/" replace />
-            )
-          }
-        />
+            ) : <Navigate to="/" replace />
+          } />
 
-
-        <Route
-          path="/setting"
-          element={
-            isAuthenticated ? (
-              <>
-                <Navigation activeTab="setting" />
-                <SettingPage />
-              </>
-            ) : (
-              <Navigate to="/" replace />
-            )
-          }
-        />
-        <Route
-          path="/lullaby"
-          element={
+          <Route path="/lullaby" element={
             isAuthenticated ? (
               <>
                 <Navigation activeTab="lullaby" />
-                <LullabiesPage />
+                <RecordPage />
               </>
-            ) : (
-              <Navigate to="/" replace />
-            )
-          }
-        />
+            ) : <Navigate to="/" replace />
+          } />
 
-        {/* Catch-all redirect */}
-        <Route path="*" element={<Navigate to={isAuthenticated ? "/monitor" : "/"} replace />} />
-      </Routes>
-    </div>
+          <Route path="/setting" element={
+            isAuthenticated ? (
+              <>
+                <Navigation activeTab="setting" />
+                <SettingsPage />
+              </>
+            ) : <Navigate to="/" replace />
+          } />
+
+          <Route path="/call" element={
+            isAuthenticated ? (
+              <>
+                
+                <BabyCameraNavigation />
+                <BabyCamera />
+              </>
+            ) : <Navigate to="/" replace />
+          } />
+
+          
+
+          {/* Catch-all Redirect */}
+          <Route path="/" element={<Navigate to={isAuthenticated ? "/monitor" : "/"} replace />} />
+
+        </Routes>
+      </div>
+    </ThemeProvider>
   );
 }
 

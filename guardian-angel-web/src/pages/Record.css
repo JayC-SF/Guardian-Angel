@@ -1,0 +1,382 @@
+.record-container {
+  padding: 2rem;
+  background: linear-gradient(to bottom right, #fdf2f8, #eff6ff, #fffbeb);
+}
+
+.record-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.record-header h1 {
+  font-size: 2.5rem;
+  font-weight: 600;
+  background: linear-gradient(to right, #fb7185, #60a5fa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.5rem;
+}
+
+.record-header p {
+  color: #6b7280;
+  font-size: 1.1rem;
+}
+
+.record-section {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.recorder-card {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(251, 113, 133, 0.1);
+}
+
+.recorder-card h2 {
+  color: #1f2937;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.input-group {
+  margin-bottom: 1.5rem;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #374151;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: #fb7185;
+  box-shadow: 0 0 0 3px rgba(251, 113, 133, 0.1);
+}
+
+.record-btn {
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 200px;
+  width: 100%;
+}
+
+.record-btn.start {
+  background: linear-gradient(to right, #fb7185, #60a5fa);
+  color: white;
+  box-shadow: 0 4px 6px -1px rgba(251, 113, 133, 0.3);
+}
+
+.record-btn.start:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px -1px rgba(251, 113, 133, 0.4);
+}
+
+.record-btn.start:active {
+  transform: translateY(0);
+}
+
+.record-btn.stop {
+  background: #ef4444;
+  color: white;
+  box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.3);
+}
+
+.record-btn.stop:hover {
+  background: #dc2626;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px -1px rgba(239, 68, 68, 0.4);
+}
+
+.recording-status {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.recording-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: #ef4444;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.pulse-dot {
+  width: 12px;
+  height: 12px;
+  background: #ef4444;
+  border-radius: 50%;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.2);
+  }
+}
+
+.recording-time {
+  font-size: 2.5rem;
+  font-weight: bold;
+  background: linear-gradient(to right, #fb7185, #60a5fa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.recordings-list {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(251, 113, 133, 0.1);
+}
+
+.recordings-list h2 {
+  color: #1f2937;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: #6b7280;
+}
+
+.empty-icon {
+  font-size: 4rem;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.empty-state p {
+  font-size: 1.1rem;
+}
+
+.recordings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.recording-card {
+  background: linear-gradient(to bottom right, #fdf2f8, #eff6ff);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 2px solid rgba(251, 113, 133, 0.2);
+  transition: all 0.2s;
+}
+
+.recording-card:hover {
+  border-color: #fb7185;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(251, 113, 133, 0.2);
+}
+
+.recording-info {
+  margin-bottom: 1rem;
+}
+
+.recording-info h3 {
+  margin: 0 0 0.5rem 0;
+  color: #1f2937;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.recording-meta {
+  margin: 0;
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.recording-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.action-btn {
+  flex: 1;
+  padding: 0.625rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.action-btn.play {
+  background: linear-gradient(to right, #10b981, #059669);
+  color: white;
+}
+
+.action-btn.play:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
+}
+
+.action-btn.delete {
+  background: linear-gradient(to right, #ef4444, #dc2626);
+  color: white;
+}
+
+.action-btn.delete:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(239, 68, 68, 0.3);
+}
+
+/* Dark Mode Styles */
+.dark-mode .record-container {
+  background: linear-gradient(to bottom right, #1a1a2e, #16213e, #0f172a);
+}
+
+.dark-mode .record-header h1 {
+  background: linear-gradient(to right, #a78bfa, #60a5fa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.dark-mode .record-header p {
+  color: #94a3b8;
+}
+
+.dark-mode .recorder-card {
+  background: #1e293b;
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .recorder-card h2 {
+  color: #f1f5f9;
+}
+
+.dark-mode .input-group label {
+  color: #cbd5e1;
+}
+
+.dark-mode .input-group input {
+  background: #0f172a;
+  border-color: #334155;
+  color: #f1f5f9;
+}
+
+.dark-mode .input-group input:focus {
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+}
+
+.dark-mode .record-btn.start {
+  background: linear-gradient(to right, #7c3aed, #3b82f6);
+  box-shadow: 0 4px 6px -1px rgba(124, 58, 237, 0.3);
+}
+
+.dark-mode .record-btn.start:hover {
+  box-shadow: 0 6px 12px -1px rgba(124, 58, 237, 0.4);
+}
+
+.dark-mode .recording-time {
+  background: linear-gradient(to right, #a78bfa, #60a5fa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.dark-mode .recordings-list {
+  background: #1e293b;
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .recordings-list h2 {
+  color: #f1f5f9;
+}
+
+.dark-mode .empty-state {
+  color: #94a3b8;
+}
+
+.dark-mode .recording-card {
+  background: linear-gradient(to bottom right, #1e293b, #0f172a);
+  border: 2px solid rgba(139, 92, 246, 0.3);
+}
+
+.dark-mode .recording-card:hover {
+  border-color: #8b5cf6;
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+}
+
+.dark-mode .recording-info h3 {
+  color: #f1f5f9;
+}
+
+.dark-mode .recording-meta {
+  color: #94a3b8;
+}
+
+.dark-mode .action-btn.play {
+  background: linear-gradient(to right, #059669, #047857);
+}
+
+.dark-mode .action-btn.play:hover {
+  box-shadow: 0 4px 8px rgba(5, 150, 105, 0.3);
+}
+
+.dark-mode .action-btn.delete {
+  background: linear-gradient(to right, #dc2626, #b91c1c);
+}
+
+.dark-mode .action-btn.delete:hover {
+  box-shadow: 0 4px 8px rgba(220, 38, 38, 0.3);
+}
+
+@media (max-width: 768px) {
+  .recordings-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .record-header h1 {
+    font-size: 2rem;
+  }
+
+  .recorder-card,
+  .recordings-list {
+    padding: 1.5rem;
+  }
+}
