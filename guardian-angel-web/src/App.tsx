@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { Route, Routes, Navigate } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
 
@@ -56,7 +55,7 @@ function AppContent() {
           } />
 
           {/* --- PROTECTED ROUTES (Require Login) --- */}
-          
+
           {/* Monitor: Includes your StoryTeller! */}
           <Route path="/monitor" element={
             isAuthenticated ? (
@@ -100,7 +99,8 @@ function AppContent() {
           <Route path="/call" element={
             isAuthenticated ? (
               <>
-                <Navigation activeTab="call" />
+
+                <BabyCameraNavigation />
                 <BabyCamera />
               </>
             ) : <Navigate to="/" replace />

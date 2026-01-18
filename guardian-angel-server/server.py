@@ -21,6 +21,8 @@ GEMINI_KEY = os.getenv('GEMINI_KEY')
 ELEVEN_KEY = os.getenv('ELEVEN_KEY')
 VOICE_ID = os.getenv('VOICE_ID')
 MONGO_URI = os.getenv('Mongo_URL') 
+PORT = os.getenv('PORT')
+
 
 google_client = genai.Client(api_key=GEMINI_KEY)
 eleven_client = ElevenLabs(api_key=ELEVEN_KEY)
@@ -62,7 +64,7 @@ def generate_lullaby():
 
         # 3. Stream back to React
         audio_bytes = b"".join(audio_generator)
-        
+
         return send_file(
             io.BytesIO(audio_bytes),
             mimetype="audio/mpeg",
