@@ -16,7 +16,7 @@ GEMINI_KEY = os.getenv('GEMINI_KEY')
 ELEVEN_KEY = os.getenv('ELEVEN_KEY')
 VOICE_ID = os.getenv('VOICE_ID')
 
-# --- FIX IS HERE: Use Client, not configure ---
+
 google_client = genai.Client(api_key=GEMINI_KEY)
 eleven_client = ElevenLabs(api_key=ELEVEN_KEY)
 
