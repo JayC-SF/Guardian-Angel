@@ -19,6 +19,8 @@ const MonitorPage = () => {
   const [isConnected, /*setIsConnected*/] = useState(true);
   const [myStream, setMyStream] = useState<MediaStream | null>(null);
   const [isMuted, setIsMuted] = useState(true);
+  const [isSendingAlert, setIsSendingAlert] = useState(false);
+  
   useEffect(() => {
     // Initialize Peer
     const peer = new Peer('', {
@@ -69,6 +71,31 @@ const MonitorPage = () => {
 
     return () => clearInterval(interval);
   }, []);
+
+  const sendAlert = async () => {
+    setIsSendingAlert(true);
+    try {
+      const res = await fetch('http://127.0.0.1:5000/send-alert', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+            message: "🚨 ALERT: Guardian Angel detected crying in the baby's room!! Go to https://guardian-angel-pci3.onrender.com/monitor" 
+        })
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        alert("✅ Alert sent to parent's phone!");
+      } else {
+        alert("❌ Failed to send alert: " + (data.error || "Unknown error"));
+      }
+    } catch (e) {
+      console.error(e);
+      alert("❌ Server not connected. Is python server.py running?");
+    } finally {
+      setIsSendingAlert(false);
+    }
+  };
 
   const stats = [
     {
@@ -239,6 +266,18 @@ const MonitorPage = () => {
                 <span className={`text-sm font-medium transition-colors duration-200 ${isDarkMode ? 'text-green-400' : 'text-green-600'
                   }`}>Sleeping peacefully</span>
               </div>
+              <button 
+                    onClick={sendAlert}
+                    disabled={isSendingAlert}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold shadow-md transition-all ${
+                        isSendingAlert 
+                        ? 'bg-gray-400 cursor-not-allowed'
+                        : 'bg-red-500 hover:bg-red-600 text-white animate-pulse'
+                    }`}
+                >
+                    <Bell className="w-4 h-4" />
+                    {isSendingAlert ? 'Sending...' : 'Simulate Cry'}
+                </button>
             </div>
           </div>
 
