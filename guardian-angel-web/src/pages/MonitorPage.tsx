@@ -31,25 +31,25 @@ const MonitorPage = () => {
     });
 
     // Listen for incoming calls
-    peer.on('call', (call: MediaConnection) => {
-      navigator.mediaDevices.getUserMedia({ audio: true })
-        .then((stream) => {
-          if (currentUserVideoRef.current) {
-            currentUserVideoRef.current.srcObject = stream;
-            currentUserVideoRef.current.play();
-          }
+    // peer.on('call', (call: MediaConnection) => {
+    //   navigator.mediaDevices.getUserMedia({ audio: true })
+    //     .then((stream) => {
+    //       if (currentUserVideoRef.current) {
+    //         currentUserVideoRef.current.srcObject = stream;
+    //         currentUserVideoRef.current.play();
+    //       }
 
-          call.answer(stream);
+    //       call.answer(stream);
 
-          call.on('stream', (remoteStream: MediaStream) => {
-            if (remoteVideoRef.current) {
-              remoteVideoRef.current.srcObject = remoteStream;
-              remoteVideoRef.current.play();
-            }
-          });
-        })
-        .catch((err) => console.error('Failed to get local stream', err));
-    });
+    //       call.on('stream', (remoteStream: MediaStream) => {
+    //         if (remoteVideoRef.current) {
+    //           remoteVideoRef.current.srcObject = remoteStream;
+    //           remoteVideoRef.current.play();
+    //         }
+    //       });
+    //     })
+    //     .catch((err) => console.error('Failed to get local stream', err));
+    // });
 
     peerInstance.current = peer;
 
@@ -133,13 +133,13 @@ const MonitorPage = () => {
 
   const toggleMute = () => {
     if (myStream) {
-      const newState = !isMuted;
+      const newMuted = !isMuted;
 
       myStream.getAudioTracks().forEach(track => {
-        track.enabled = newState; // enabled: true means unmuted
+        track.enabled = !newMuted; // enabled: true means unmuted
       });
 
-      setIsMuted(newState);
+      setIsMuted(newMuted);
     }
   };
   console.log(isMuted);
