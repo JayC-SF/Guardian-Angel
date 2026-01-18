@@ -5,8 +5,8 @@ import { BrowserRouter } from 'react-router';
 import App from './App.tsx';
 import './index.css';
 
-const domain = import.meta.env.VITE_AUTH0_DOMAIN;
-const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID;
+const domain = import.meta.env.VITE_AUTH0_DOMAIN || 'dev-8575mxouxdzhyuo3.us.auth0.com';
+const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID || 'd3ZlK7kYL9hU9346mxadjQMIpKF4YhN7';
 
 // Handle redirect after Auth0 login
 const onRedirectCallback = (appState: any) => {
