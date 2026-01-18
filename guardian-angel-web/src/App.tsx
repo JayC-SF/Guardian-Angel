@@ -5,9 +5,10 @@ import LoginPage from './pages/LoginPage';
 import SettingPage from './pages/SettingPage';
 import LullabiesPage from './pages/LullabiesPage';
 import { Route, Routes, Navigate } from 'react-router';
-import Call from './pages/Call';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useEffect } from 'react';
+import BabyCameraNavigation from './components/BabyCameraNavigation';
+import BabyCamera from './pages/BabyCamera';
 
 function App() {
   const { isLoading, isAuthenticated } = useAuth0();
@@ -77,8 +78,8 @@ function App() {
           element={
             isAuthenticated ? (
               <>
-                <Navigation activeTab="activity" />
-                <Call />
+                <BabyCameraNavigation />
+                <BabyCamera />
               </>
             ) : (
               <Navigate to="/" replace />
