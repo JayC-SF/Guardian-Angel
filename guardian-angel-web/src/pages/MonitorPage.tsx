@@ -1,4 +1,4 @@
-import { Heart, Thermometer, Wind, Volume2, Video, Camera } from 'lucide-react';
+import { Heart, Thermometer, Wind, Volume2, Video, Camera, Mic, MicOff } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import Peer, { MediaConnection } from 'peerjs';
 
@@ -15,8 +15,8 @@ const MonitorPage = () => {
   const [temperature, setTemperature] = useState(36.8);
   const [breathing, setBreathing] = useState(32);
   const [isConnected, /*setIsConnected*/] = useState(true);
-  // const [myStream, setMyStream] = useState<MediaStream | null>(null);
-  // const [isMuted, setIsMuted] = useState(true);
+  const [myStream, setMyStream] = useState<MediaStream | null>(null);
+  const [isMuted, setIsMuted] = useState(true);
   useEffect(() => {
     // Initialize Peer
     const peer = new Peer('', {
@@ -115,8 +115,8 @@ const MonitorPage = () => {
           currentUserVideoRef.current.srcObject = stream;
           currentUserVideoRef.current.play();
         }
-        // setMyStream(stream);
-        // setIsMuted(true);
+        setMyStream(stream);
+        setIsMuted(true);
 
         // Check if peerInstance exists before calling
         const call = peerInstance.current?.call(remoteId, stream);
@@ -131,18 +131,18 @@ const MonitorPage = () => {
       .catch((err) => console.error('Failed to get local stream', err));
   };
 
-  // const toggleMute = () => {
-  //   if (myStream) {
-  //     const newState = !isMuted;
+  const toggleMute = () => {
+    if (myStream) {
+      const newState = !isMuted;
 
-  //     myStream.getAudioTracks().forEach(track => {
-  //       track.enabled = !newState; // enabled: true means unmuted
-  //     });
+      myStream.getAudioTracks().forEach(track => {
+        track.enabled = !newState; // enabled: true means unmuted
+      });
 
-  //     setIsMuted(newState);
-  //   }
-  // };
-
+      setIsMuted(newState);
+    }
+  };
+  console.log(isMuted);
   return (
     <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-br from-rose-50 via-blue-50 to-amber-50 p-6">
       <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
@@ -177,25 +177,21 @@ const MonitorPage = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 bg-white rounded-2xl shadow-lg overflow-hidden border border-rose-100">
-            {remotePeerIdValue != "" ? (
-              <video ref={remoteVideoRef} style={{ width: '100%', background: '#000' }} />
-              // <div className="absolute top-4 right-4 flex space-x-2">
-              //   <button className="p-2 bg-white/90 backdrop-blur-sm rounded-lg shadow-md hover:bg-white transition-all">
-              //     <Camera className="w-5 h-5 text-gray-700" />
-              //   </button>
-              //   <button className="p-2 bg-white/90 backdrop-blur-sm rounded-lg shadow-md hover:bg-white transition-all">
-              //     <Volume2 className="w-5 h-5 text-gray-700" />
-              //   </button>
-              // </div>
+            {myStream != null ? (
+              <div className="relative aspect-video bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                <div className="absolute top-4 right-4 flex space-x-2">
+                  {myStream && (<button className="p-2 bg-white/90 backdrop-blur-sm rounded-lg shadow-md hover:bg-white transition-all">
+                    {isMuted ? <MicOff className="w-5 h-5 text-gray-700" onClick={toggleMute} /> : <Mic className="w-5 h-5 text-red-600" onClick={toggleMute} />}
+                  </button>)}
+                </div>
+                <video className="w-full h-full" ref={remoteVideoRef} style={{ width: '100%', background: '#000' }} />
+              </div>
             ) :
               (
                 <div className="relative aspect-video bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
                   <div className="absolute top-4 right-4 flex space-x-2">
                     <button className="p-2 bg-white/90 backdrop-blur-sm rounded-lg shadow-md hover:bg-white transition-all">
                       <Camera className="w-5 h-5 text-gray-700" />
-                    </button>
-                    <button className="p-2 bg-white/90 backdrop-blur-sm rounded-lg shadow-md hover:bg-white transition-all">
-                      <Volume2 className="w-5 h-5 text-gray-700" />
                     </button>
                   </div>
                   <div className="text-center">
