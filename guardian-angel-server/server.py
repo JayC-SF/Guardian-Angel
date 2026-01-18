@@ -15,10 +15,12 @@ CORS(app)
 GEMINI_KEY = os.getenv('GEMINI_KEY')
 ELEVEN_KEY = os.getenv('ELEVEN_KEY')
 VOICE_ID = os.getenv('VOICE_ID')
+PORT = os.getenv('PORT')
 
 
 google_client = genai.Client(api_key=GEMINI_KEY)
 eleven_client = ElevenLabs(api_key=ELEVEN_KEY)
+
 
 @app.route('/generate-lullaby', methods=['POST'])
 def generate_lullaby():
@@ -46,7 +48,7 @@ def generate_lullaby():
 
         # 3. Stream back to React
         audio_bytes = b"".join(audio_generator)
-        
+
         return send_file(
             io.BytesIO(audio_bytes),
             mimetype="audio/mpeg",
@@ -58,5 +60,6 @@ def generate_lullaby():
         print(f"ERROR: {e}")
         return {"error": str(e)}, 500
 
+
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(host="0.0.0.0", debug=True, port=PORT)

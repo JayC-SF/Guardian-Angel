@@ -5,14 +5,14 @@ const SettingPage = () => {
   const [heartRate, setHeartRate] = useState(120);
   const [temperature, setTemperature] = useState(36.8);
   const [breathing, setBreathing] = useState(32);
-  const [isConnected, setIsConnected] = useState(true);
+  const [isConnected,] = useState(true);
 
   useEffect(() => {
     const interval = setInterval(() => {
       setHeartRate(118 + Math.random() * 6);
       setTemperature(36.5 + Math.random() * 0.8);
       setBreathing(30 + Math.random() * 6);
-    }, 3000); 
+    }, 3000);
 
     return () => clearInterval(interval);
   }, []);

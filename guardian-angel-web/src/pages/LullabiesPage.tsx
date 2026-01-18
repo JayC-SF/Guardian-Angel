@@ -1,4 +1,3 @@
-import { Music } from 'lucide-react';
 
 const LullabiesPage = () => {
   return (

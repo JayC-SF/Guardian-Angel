@@ -9,13 +9,13 @@ export default function StoryTeller() {
 
   const handleGenerate = async () => {
     if (!topic) return alert("Please enter a topic!");
-    
+
     setIsLoading(true);
     setStatus('Asking Gemini & ElevenLabs...');
 
     try {
       // 1. Call YOUR Python Server (Running on port 5000)
-      const response = await fetch('http://127.0.0.1:5000/generate-lullaby', {
+      const response = await fetch(window.location.hostname == 'localhost' ? 'http://127.0.0.1:5000/generate-lullaby' : `${import.meta.env.VITE_PYTHON_SERVER}/generate-lullaby`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ topic: topic })
@@ -49,17 +49,17 @@ export default function StoryTeller() {
   return (
     <div className="storyteller-container">
       <h2 className="storyteller-title">🌙 Bedtime Storyteller</h2>
-      
-      <input 
-        type="text" 
+
+      <input
+        type="text"
         value={topic}
         onChange={(e) => setTopic(e.target.value)}
         placeholder="What does Leo love? (e.g. Dinosaurs)"
         className="storyteller-input"
       />
-      
-      <button 
-        onClick={handleGenerate} 
+
+      <button
+        onClick={handleGenerate}
         disabled={isLoading}
         className={`storyteller-button ${isLoading ? 'disabled' : ''}`}
       >
@@ -67,8 +67,8 @@ export default function StoryTeller() {
       </button>
 
       {/* Stop Button */}
-      <button 
-        onClick={() => { if(audioRef.current) audioRef.current.pause(); setStatus("Stopped"); }}
+      <button
+        onClick={() => { if (audioRef.current) audioRef.current.pause(); setStatus("Stopped"); }}
         className="storyteller-stop-button"
       >
         Stop Audio

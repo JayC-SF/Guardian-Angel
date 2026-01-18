@@ -1,4 +1,4 @@
-import { Heart, Thermometer, Wind, Volume2, Video, Camera, Mic, MicOff } from 'lucide-react';
+import { Heart, Thermometer, Wind, Video, Camera, Mic, MicOff } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import Peer, { MediaConnection } from 'peerjs';
 import { useTheme } from '../contexts/ThemeContext';
