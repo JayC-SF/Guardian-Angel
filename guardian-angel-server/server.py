@@ -20,6 +20,7 @@ CORS(app)
 GEMINI_KEY = os.getenv('GEMINI_KEY')
 ELEVEN_KEY = os.getenv('ELEVEN_KEY')
 VOICE_ID = os.getenv('VOICE_ID')
+PORT = os.getenv('PORT')
 
 
 google_client = genai.Client(api_key=GEMINI_KEY)
@@ -96,4 +97,4 @@ def predict():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=PORT)
