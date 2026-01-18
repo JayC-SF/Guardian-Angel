@@ -12,7 +12,7 @@ interface Recording {
 
 export const RecordPage = () => {
   const { user, isAuthenticated } = useAuth0();
-  
+
   const [isRecording, setIsRecording] = useState(false);
   const [recordings, setRecordings] = useState<Recording[]>([]);
   const [recordingTime, setRecordingTime] = useState(0);
@@ -33,7 +33,8 @@ export const RecordPage = () => {
   const fetchRecordings = async () => {
     try {
       // Re-using the get-library endpoint we made earlier
-      const res = await fetch(`http://127.0.0.1:5000/get-library/${user?.sub}`);
+      const url = window.location.hostname == 'localhost' ? `http://127.0.0.1:5000/get-library/${user?.sub}` : `${import.meta.env.VITE_PYTHON_SERVER}/get-library/${user?.sub}`;
+      const res = await fetch(url);
       const data = await res.json();
       // Filter to only show recordings (if you want to mix them, remove the filter)
       setRecordings(data);
@@ -42,7 +43,7 @@ export const RecordPage = () => {
     }
   };
 
-  const startRecording = async () => { 
+  const startRecording = async () => {
     if (!isAuthenticated) return alert("Please log in to save recordings.");
 
     try {
@@ -60,7 +61,7 @@ export const RecordPage = () => {
       mediaRecorder.onstop = async () => {
         const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
         const duration = recordingTime; // Capture time before reset
-        
+
         // 2. UPLOAD TO SERVER
         await handleUpload(audioBlob, duration);
 
@@ -92,14 +93,15 @@ export const RecordPage = () => {
     formData.append('duration', duration.toString());
 
     try {
-      const res = await fetch('http://127.0.0.1:5000/upload-lullaby', {
+      const url = window.location.hostname == 'localhost' ? 'http://127.0.0.1:5000/upload-lullaby' : `${import.meta.env.VITE_PYTHON_SERVER}/upload-lullaby`;
+      const res = await fetch(url, {
         method: 'POST',
         body: formData,
       });
 
       if (res.ok) {
         // Refresh list from DB
-        fetchRecordings(); 
+        fetchRecordings();
       } else {
         alert("Failed to save recording to server.");
       }
@@ -114,7 +116,7 @@ export const RecordPage = () => {
     if (mediaRecorderRef.current && isRecording) {
       mediaRecorderRef.current.stop();
       setIsRecording(false);
-      
+
       if (timerRef.current) {
         clearInterval(timerRef.current);
         timerRef.current = null;
@@ -128,13 +130,14 @@ export const RecordPage = () => {
   };
 
   const deleteRecording = async (id: string) => {
-    if(!confirm("Are you sure?")) return;
-    
+    if (!confirm("Are you sure?")) return;
+
     // Optimistic update
     setRecordings(recordings.filter(r => r._id !== id));
-    
+
     // Call server API
-    await fetch(`http://127.0.0.1:5000/delete-lullaby/${id}`, { method: 'DELETE' });
+    const url = window.location.hostname == 'localhost' ? `http://127.0.0.1:5000/delete-lullaby/${id}` : `${import.meta.env.VITE_PYTHON_SERVER}/delete-lullaby/${id}`;
+    await fetch(url, { method: 'DELETE' });
   };
 
   const formatTime = (seconds: number) => {
@@ -151,11 +154,11 @@ export const RecordPage = () => {
       </div>
 
       <div className="record-section max-w-4xl mx-auto grid md:grid-cols-2 gap-8">
-        
+
         {/* RECORDER CARD */}
         <div className="recorder-card bg-white p-6 rounded-xl shadow-lg h-fit">
           <h2 className="text-xl font-bold mb-4">New Recording</h2>
-          
+
           {!isRecording ? (
             <div className="space-y-4">
               <div className="input-group">
@@ -168,9 +171,9 @@ export const RecordPage = () => {
                   className="w-full border p-2 rounded focus:ring-2 focus:ring-purple-300 outline-none"
                 />
               </div>
-              
-              <button 
-                onClick={startRecording} 
+
+              <button
+                onClick={startRecording}
                 disabled={isUploading}
                 className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-full transition-all flex items-center justify-center gap-2"
               >
@@ -180,12 +183,12 @@ export const RecordPage = () => {
           ) : (
             <div className="text-center space-y-6 py-4">
               <div className="text-4xl font-mono text-red-500 font-bold animate-pulse">
-                 {formatTime(recordingTime)}
+                {formatTime(recordingTime)}
               </div>
               <div className="text-sm text-gray-500">Recording in progress...</div>
-              
-              <button 
-                onClick={stopRecording} 
+
+              <button
+                onClick={stopRecording}
                 className="w-full bg-red-100 hover:bg-red-200 text-red-600 font-bold py-3 px-4 rounded-full border-2 border-red-200 transition-all"
               >
                 ⏹️ Stop & Save
@@ -197,7 +200,7 @@ export const RecordPage = () => {
         {/* LIST CARD */}
         <div className="recordings-list bg-white p-6 rounded-xl shadow-lg">
           <h2 className="text-xl font-bold mb-4">Your Library</h2>
-          
+
           {recordings.length === 0 ? (
             <div className="text-center text-gray-400 py-8">
               <p>No recordings yet.</p>
@@ -212,7 +215,7 @@ export const RecordPage = () => {
                       {rec.created_at ? new Date(rec.created_at).toLocaleDateString() : 'Just now'}
                     </p>
                   </div>
-                  
+
                   <div className="flex gap-2">
                     <button
                       onClick={() => playRecording(rec.audio_url)}

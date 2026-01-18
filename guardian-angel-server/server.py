@@ -104,7 +104,7 @@ def upload_lullaby():
         file.save(filepath)
 
         # 2. Generate URL
-        file_url = f"http://127.0.0.1:5000/static/{filename}"
+        file_url = f"http://127.0.0.1:{PORT}/static/{filename}"
 
         # 3. Save Receipt to MongoDB
         lullabies_collection.insert_one({
