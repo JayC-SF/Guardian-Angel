@@ -7,4 +7,18 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['lucide-react'],
   },
+  server: {
+    proxy: {
+      // Proxy /api requests to the backend
+      "/api": {
+        target: "http://localhost:3000", // Backend server URL
+        changeOrigin: true, // Needed for virtual hosted sites
+      },
+      "/peerjs": {
+        target: "http://localhost:3000", // Backend server URL
+        changeOrigin: true, // Needed for virtual hosted sites
+        ws: true, // Enable WebSocket proxying
+      },
+    },
+  },
 });
