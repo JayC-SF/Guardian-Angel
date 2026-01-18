@@ -42,7 +42,7 @@ const Navigation = ({ activeTab }: NavigationProps) => {
       }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <div className="flex items-center space-x-3">
+          <Link to="/monitor" className="flex items-center space-x-3">
             <div className={`p-2 rounded-xl transition-colors duration-200 ${isDarkMode
               ? 'bg-gradient-to-br from-rose-900/30 to-blue-900/30'
               : 'bg-gradient-to-br from-rose-100 to-blue-100'
@@ -56,7 +56,7 @@ const Navigation = ({ activeTab }: NavigationProps) => {
               }`}>
               Guardian Angel
             </h1>
-          </div>
+          </Link>
 
           <div className="flex items-center space-x-4">
             <div className="flex space-x-1">
