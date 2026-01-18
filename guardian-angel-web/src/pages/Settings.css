@@ -2,7 +2,7 @@
   padding: 2rem;
   max-width: 800px;
   margin: 0 auto;
-  min-height: 100vh;
+  min-height: calc(100vh - 4rem);
 }
 
 .settings-container h1 {
@@ -108,7 +108,7 @@
 
 /* Dark Mode Styles */
 .dark-mode .settings-container {
-  background: linear-gradient(to bottom right, #1a1a2e, #16213e, #0f172a);
+  background: transparent; /* Inherit from app background */
 }
 
 .dark-mode .settings-container h1 {

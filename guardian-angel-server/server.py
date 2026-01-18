@@ -30,7 +30,7 @@ def generate_lullaby():
         # 1. Generate Text (New SDK Syntax)
         response = google_client.models.generate_content(
             model="gemini-3-flash-preview",
-            contents=f"Write a very short, soothing 3-sentence bedtime story for a child who loves {topic}."
+            contents=f"Write a very short, soothing 3-sentence bedtime story for a baby who loves {topic}."
         )
         story_text = response.text
         print(f"Story: {story_text}")
