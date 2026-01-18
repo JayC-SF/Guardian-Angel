@@ -5,6 +5,11 @@ from elevenlabs.client import ElevenLabs
 import os
 import io
 from dotenv import load_dotenv
+import tensorflow as tf
+from tensorflow.keras.models import load_model
+import tensorflow_hub as hub
+import librosa
+import numpy as np
 
 load_dotenv()
 
@@ -19,6 +24,7 @@ VOICE_ID = os.getenv('VOICE_ID')
 
 google_client = genai.Client(api_key=GEMINI_KEY)
 eleven_client = ElevenLabs(api_key=ELEVEN_KEY)
+
 
 @app.route('/generate-lullaby', methods=['POST'])
 def generate_lullaby():
@@ -46,7 +52,7 @@ def generate_lullaby():
 
         # 3. Stream back to React
         audio_bytes = b"".join(audio_generator)
-        
+
         return send_file(
             io.BytesIO(audio_bytes),
             mimetype="audio/mpeg",
@@ -57,6 +63,37 @@ def generate_lullaby():
     except Exception as e:
         print(f"ERROR: {e}")
         return {"error": str(e)}, 500
+
+
+# Load YAMNet
+yamnet_model = hub.load("https://tfhub.dev/google/yamnet/1")
+
+# Load classifier
+model = load_model("./baby_cry_classifier.keras")
+
+
+def extract_embedding(file_path):
+    audio, _ = librosa.load(file_path, sr=16000)
+    scores, embeddings, spectrogram = yamnet_model(audio)
+    avg_embedding = tf.reduce_mean(embeddings, axis=0)
+    return avg_embedding.numpy()
+
+
+@app.route("/predict", methods=["POST"])
+def predict():
+    if "file" not in request.files:
+        return jsonify({"error": "No file uploaded"}), 400
+
+    file = request.files["file"]
+    file_path = "temp.wav"
+    file.save(file_path)
+
+    embedding = extract_embedding(file_path)
+    prob = model.predict(np.expand_dims(embedding, axis=0))[0][0]
+    label = "cry" if prob > 0.5 else "not_cry"
+
+    return jsonify({"prediction": label, "probability": float(prob)})
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
