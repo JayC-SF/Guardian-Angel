@@ -29,9 +29,25 @@ VOICE_ID = os.getenv('VOICE_ID')
 MONGO_URI = os.getenv('Mongo_URL')
 PORT = 6000
 
+TWILIO_SID = os.getenv("TWILIO_SID")
+TWILIO_TOKEN = os.getenv("TWILIO_TOKEN")
+TWILIO_PHONE = os.getenv("TWILIO_PHONE")
+PARENT_PHONE = os.getenv("PARENT_PHONE")
+
 
 google_client = genai.Client(api_key=GEMINI_KEY)
 eleven_client = ElevenLabs(api_key=ELEVEN_KEY)
+
+#Initialize Twilio Client
+try:
+    if TWILIO_SID and TWILIO_TOKEN:
+        twilio_client = Client(TWILIO_SID, TWILIO_TOKEN)
+        print("✅ Twilio Client Initialized")
+    else:
+        print("⚠️ Twilio Keys missing in .env")
+        twilio_client = None
+except Exception as e:
+    print(f"⚠️ Twilio Error: {e}")
 
 # --- DATABASE CONNECTION ---
 try:
@@ -43,7 +59,31 @@ except Exception as e:
     print(f"❌ Database Error: {e}")
 
 # --- ROUTES ---
+# --- ROUTE 1: SMS ALERT (The New Feature) ---
+@app.route('/send-alert', methods=['POST'])
+def send_alert():
+    if not twilio_client:
+        return jsonify({"error": "Twilio not configured"}), 500
 
+    try:
+        # Get custom message or use default
+        data = request.json
+        message_body = data.get('message', "🚨 ALERT: Guardian Angel detected the baby crying! Go to http://localhost:5173/call")
+
+        print(f"Sending SMS to {PARENT_PHONE}...")
+
+        message = twilio_client.messages.create(
+            body=message_body,
+            from_=TWILIO_PHONE,
+            to=PARENT_PHONE
+        )
+
+        print(f"✅ SMS Sent! SID: {message.sid}")
+        return jsonify({"status": "sent", "sid": message.sid})
+
+    except Exception as e:
+        print(f"❌ SMS Failed: {e}")
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/generate-lullaby', methods=['POST'])
 def generate_lullaby():
