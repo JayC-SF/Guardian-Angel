@@ -2,7 +2,8 @@ import Navigation from './components/Navigation';
 import MonitorPage from './pages/MonitorPage';
 import ActivityPage from './pages/ActivityPage';
 import { BrowserRouter, Route, Routes } from 'react-router';
-import Call from './pages/Call';
+import BabyCamera from './pages/BabyCamera';
+import BabyCameraNavigation from './components/BabyCameraNavigation';
 
 function App() {
 
@@ -52,9 +53,10 @@ function App() {
             </>} />
           <Route path="/call" element={
             <>
-              <Navigation activeTab={"activity"} />
-              <Call />
-            </>} />
+              <BabyCameraNavigation />
+              <BabyCamera />
+            </>
+          } />
         </Routes>
       </div>
     </BrowserRouter>
